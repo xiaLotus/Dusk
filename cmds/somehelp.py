@@ -51,6 +51,11 @@ class Select(discord.ui.Select):
                 value = '可以看見選單呦',
                 inline = True 
             )
+            help_embed.add_field(
+                name = '`!pm`',
+                value = '!pm @people message',
+                inline = True 
+            )
 
         if select_value == '爬蟲指令':
             help_embed.description = f"這裡是爬蟲指令，目前只開放我可不想室友都成精啊此伺服器使用"
