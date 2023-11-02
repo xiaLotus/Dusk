@@ -118,8 +118,8 @@ class SomeHelp(commands.Cog):
             inline = True
         )
         help_embed.add_field(
-            name = '爬蟲指令',
-            value = '`選擇爬蟲指令查詢`',
+            name = '?指令',
+            value = '可以期待一下',
             inline = True
         )
         help_embed.set_image(url = self.bot.user.avatar.url)
