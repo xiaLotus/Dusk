@@ -67,6 +67,7 @@ class goldhouse(commands.Cog):
                 #     unprocessed_file.write(f"{chapter_link}\n")
                 # return
             
+            
 
         soup = BeautifulSoup(request_text, 'html.parser')
         path = f"{title}/{chapter_title}.txt"
@@ -107,7 +108,8 @@ class goldhouse(commands.Cog):
         result_text = '\n'.join(lines)
         with open(f'{path}', 'w', encoding='utf-8') as file:
             file.write(result_text)
-        # print(path, ' ok')
+        # print(path, ' -- ok')
+
 
 
 
@@ -181,9 +183,14 @@ class goldhouse(commands.Cog):
                 # chapter_links = []
                 with open(f'{title}.txt', 'r', encoding = 'utf-8') as file:
                     lines = file.readlines()
-                    
-                tasks = [self.get_novel_page(title, chapter_link, headers) for chapter_link in lines]
-                await asyncio.gather(*tasks)
+                
+                now = time.time()
+                try:
+                    if now - start <= 60:
+                        tasks = [self.get_novel_page(title, chapter_link, headers) for chapter_link in lines]
+                        await asyncio.gather(*tasks)
+                except:
+                    pass
 
                 # await self.process_unprocessed_chapters(title, headers)
 
@@ -191,6 +198,7 @@ class goldhouse(commands.Cog):
                 source_directory = f'{title}'
                 output_zipfile = f'{title}.zip'
                 await asyncio.sleep(3)
+            
                 zip_end = await self.goldhouse_zip_directory(ctx, title, source_directory, output_zipfile)
                 # 頻道id
                 channel_id = 1169913780591927296
@@ -213,11 +221,15 @@ class goldhouse(commands.Cog):
 
             except EOFError as ce:
                 await ctx.send(f"問題: {ce}")
-            else:
-                await ctx.send('輸入有問題！請修正！')
+            # else:
+            #     await ctx.send('輸入有問題！請修正！')
         else:
             return
-                                        
+
+    @goldhouse.error
+    async def goldhouse_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.channel.send(f'請等待 {error.retry_after:.0f} 秒後再試著下載！')                                       
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(goldhouse(bot))
