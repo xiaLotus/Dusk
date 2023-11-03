@@ -65,6 +65,11 @@ class Select(discord.ui.Select):
                 value = '輸入書號，如 31585',
                 inline = True 
             )
+            help_embed.add_field(
+                name = '`!goldhouse` `書號`',
+                value = '輸入書號，如 44549，有些書還是不能爬，目前將就著用還是可以的還是不能爬，目前將就著用還是可以的。',
+                inline = True 
+            )
         if select_value == '?指令':
             help_embed.description = f"可以期待 ~"
             help_embed.colour = 0xF59E42
