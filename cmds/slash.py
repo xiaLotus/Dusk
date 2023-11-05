@@ -4,60 +4,13 @@ from discord import app_commands
 from discord.ext import commands
 from discord.app_commands import Choice
 import json
-
-class Slash(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-
-    # name指令名稱，description指令敘述
-    @app_commands.command(name = "hello", description = "Hello, world!")
-    async def hello(self, interaction: discord.Interaction):
-        # 回覆使用者的訊息
-        await interaction.response.send_message("Hello, world!")
-
-    # @app_commands.describe(參數名稱 = 參數敘述)
-    # 參數: 資料型態，可以限制使用者輸入的內容
-    @app_commands.command(name = "add", description = "計算相加值")
-    @app_commands.describe(a = "輸入數字", b = "輸入數字")
-    async def add(self, interaction: discord.Interaction, a: int, b: int):
-        await interaction.response.send_message(f"Total: {a + b}")
-
-    # 參數: Optional[資料型態]，參數變成可選，可以限制使用者輸入的內容
-    @app_commands.command(name = "say", description = "大聲說出來")
-    @app_commands.describe(name = "輸入人名", text = "輸入要說的話")
-    async def say(self, interaction: discord.Interaction, name: str, text: Optional[str] = None):
-        if text == None:
-            text = "。。。"
-        await interaction.response.send_message(f"{name} 說 「{text}」")
-
-    # @app_commands.choices(參數 = [Choice(name = 顯示名稱, value = 隨意)])
-    @app_commands.command(name = "order", description = "點餐機")
-    @app_commands.describe(meal = "選擇餐點", size = "選擇份量")
-    @app_commands.choices(
-        meal = [
-            Choice(name = "漢堡", value = "hamburger"),
-            Choice(name = "薯條", value = "fries"),
-            Choice(name = "雞塊", value = "chicken_nuggets"),
-        ],
-        size = [
-            Choice(name = "大", value = 0),
-            Choice(name = "中", value = 1),
-            Choice(name = "小", value = 2),
-        ]
-    )
-    async def order(self, interaction: discord.Interaction, meal: Choice[str], size: Choice[int]):
-        # 獲取使用指令的使用者名稱
-        customer = interaction.user.name
-        # 使用者選擇的選項資料，可以使用name或value取值
-        meal = meal.value
-        size = size.value
-        await interaction.response.send_message(f"{customer} 點了 {size} 號 {meal} 餐")
+import asyncio
 
 class Daily(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = 'daily', description = '每日 星座')
+    @app_commands.command(name = '每日星座', description = '選取你的星座')
     @app_commands.describe(star = '星座')
     @app_commands.choices(
         star = [
@@ -85,6 +38,7 @@ class Daily(commands.Cog):
         star = star.value
         # 引述
         short_review = star_urls[star]['今日短評']
+        # print(short_review)
         lucky_number = star_urls[star]['幸運數字']
         lucky_color = star_urls[star]['幸運顏色']
         auspicious_direction = star_urls[star]['開運方位']
@@ -112,13 +66,14 @@ class Daily(commands.Cog):
         fortune_unstar = star_urls[star]['財運運勢']['unstar']
         fortune_text = star_urls[star]['財運運勢']['text']
 
-        embed = discord.Embed(title = f"{star}", color = '#7796F0')
+        # embed = discord.Embed(title = f"{star}", color = '#7796F0')
+        embed = discord.Embed(title = f"{star}", color = discord.Color.orange())
         # embed.set_author(
         #     name = f'{self.bot.user.name}',
         #     icon_url = self.bot.user.avatar.url
         # )
         # 短評到幸運星座 
-        embed.add_field(name = '今日短評', value = f'{short_review}', inline = True)
+        embed.add_field(name = '今日短評', value = f"{short_review}", inline = True)
         embed.add_field(name = '幸運數字', value = f'{lucky_number}', inline = True)
         embed.add_field(name = '幸運顏色', value = f'{lucky_color}', inline = True)
         embed.add_field(name = '開運方位', value = f'{auspicious_direction}', inline = True)
@@ -143,8 +98,25 @@ class Daily(commands.Cog):
                         value = f'星數: {fortune_star*"★"}{fortune_unstar*"☆"} \n 內文: {fortune_text}',                       
                         inline = True
                         )
+        embed.set_footer(
+            icon_url = self.bot.user.avatar.url,
+            text = 'Dusk - 蕸製作'
+        )
         await interaction.response.send_message(embed = embed)
+            
+    @app_commands.command(name="延遲",description="取得機器人的延遲")
+    async def ping(self,interaction:discord.Interaction):
+        past_ping = self.bot.latency
+        new_ping1 = past_ping*1000
+        await interaction.response.send_message(f"目前機器人的延遲是`{round(new_ping1,1)}ms`")
+
+    @app_commands.command(name = "私訊", description = "Dusk幫你傳送訊囉...別吵，就在傳了")
+    @app_commands.describe(member = "成員", message = "訊息")
+    async def private_message(self, interaction: discord.Interaction, member: discord.User, message: str):
+        text = f"{message}"
+        await member.send(f"我是來幫忙傳話的： \n {text} \n 話傳完了，我走了")
+        await interaction.response.send_message("傳送成功", ephemeral = True)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Slash(bot))
+
     await bot.add_cog(Daily(bot))
