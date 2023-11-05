@@ -31,7 +31,7 @@ class Delete(commands.Cog):
             )
             embed.set_image(url = ctx.author.display_avatar.url)
             # 頻道id
-            channel_id = 1167396097501708299
+            channel_id = 1170633151056457780
             # get 頻道id
             send_ctx_to_channel = self.bot.get_channel(channel_id)
             if send_ctx_to_channel:
