@@ -36,7 +36,7 @@ class TaskTime(commands.Cog):
 
 class horoscope_date(commands.Cog):
     tz = datetime.timezone(datetime.timedelta(hours = 8))
-    everyday_time = datetime.time(hour = 0, minute = 0, tzinfo = tz)
+    everyday_time = datetime.time(hour = 9, minute = 0, tzinfo = tz)
 
     def __init__(self, bot: commands.Bot):
        self.bot = bot
@@ -221,7 +221,7 @@ class horoscope_date(commands.Cog):
 class deletefile(commands.Cog):
 
     tz = datetime.timezone(datetime.timedelta(hours = 8))
-    everyday_time = datetime.time(hour = 23, minute = 59, tzinfo = tz)
+    everyday_time = datetime.time(hour = 8, minute = 59, tzinfo = tz)
     def __init__(self, bot: commands.Bot):
        self.bot = bot
        self.delfile.start()
