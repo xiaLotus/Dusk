@@ -31,6 +31,10 @@ class Daily(commands.Cog):
 
     async def daily(self, interaction: discord.Interaction, star: Choice[str]):
         customer = interaction.user.display_name
+        if interaction.channel_id != 1170618194801725480:
+            await interaction.response.send_message("此指令僅能在指定頻道使用", ephemeral = True)
+            return
+        
         with open('all_horoscope_data.json', 'r', encoding = 'utf-8') as json_file:
             star_urls = json.load(json_file)
         
