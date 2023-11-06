@@ -10,10 +10,7 @@ import datetime
 class add_reaction(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-
-
-
+        
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         # 添加身分組的message_id
