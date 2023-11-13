@@ -36,7 +36,7 @@ class TaskTime(commands.Cog):
 
 class horoscope_date(commands.Cog):
     tz = datetime.timezone(datetime.timedelta(hours = 8))
-    everyday_time = datetime.time(hour = 9, minute = 0, tzinfo = tz)
+    everyday_time = datetime.time(hour = 9, minute = 49, tzinfo = tz)
 
     def __init__(self, bot: commands.Bot):
        self.bot = bot
@@ -62,14 +62,19 @@ class horoscope_date(commands.Cog):
         #     print(f'星座: {name}, url: {date["url"]}')
 
 
-    async def get_web_total(self, url, headers):
+    async def get_web_total(self, url):
+        ua = UserAgent()
+        headers = {
+            'user-agent': ua.random,
+        }
         request = requests.get(url, headers = headers, timeout = 5)
         request = request.text
         request.encode('utf-8')
+        # print(request)
         soup = BeautifulSoup(request, 'html.parser')
         # 爬內文
         horoscope_element = soup.find("meta", {"name": "sailthru.excerpt"})
-        
+        # print(horoscope_element)
         # 存入字典
         horoscope_date = {
             'url': '',
@@ -208,8 +213,8 @@ class horoscope_date(commands.Cog):
             star_urls = json.load(json_file)
 
         for name, date in star_urls.items():
-            # print(f'星座: {name}, url: {date["url"]}')
-            horoscope_date = await self.get_web_total(date["url"], headers)
+            print(f'星座: {name}, url: {date["url"]}')
+            horoscope_date = await self.get_web_total(date["url"])
             all_horoscope_data[name] = horoscope_date 
             
         with open('all_horoscope_data.json', 'w', encoding = 'utf-8') as json_file:
